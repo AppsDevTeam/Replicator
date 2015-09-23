@@ -1,0 +1,26 @@
+{
+	"name": "forms-replicator",
+	"description": "Client side script for Kdyby forms replicator (addDynamic)",
+	"homepage": "http://nette.org",
+	"keywords": [
+		"nette",
+		"forms",
+		"addDynamic",
+		"replicator"
+	],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "ADT",
+			"homepage": "http://appsdevteam.com"
+		}
+	],
+	"main": "src/assets/jquery.forms-replicator.js",
+	"ignore": [
+		"src/Kdyby",
+		"tests",
+		"examples",
+		"**/.*",
+		"*.json"
+	]
+}
