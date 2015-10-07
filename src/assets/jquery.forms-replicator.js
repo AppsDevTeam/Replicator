@@ -184,12 +184,17 @@
 			var idRegexp = '(?:'+ self.o.idPrefix +')?\\d+';
 			var regexp = new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
 
+			var stringMatch = string.match(regexp);
+			if (stringMatch === null) return string;	// nejedná se o string reprezentující název komponenty
+
+			var matchCount = stringMatch.length;
 			var matchIndex = 0;
 			return string.replace(regexp, function(match, l1, r1, l2, r2, pos, original){
 				var out = match;
 				var l = l1 || l2;
 				var r = r1 || r2;
 				if (matchIndex === 0) {	// first occurance
+				//if (matchIndex === matchCount-1) {	// last occurance
 					out = l + self.o.idPrefix + counter + r;
 				}
 
