@@ -193,7 +193,8 @@
 				var out = match;
 				var l = l1 || l2;
 				var r = r1 || r2;
-				if (matchIndex === 0) {	// first occurance
+				if (matchIndex === self.o.depth) {	// particular occurance
+				//if (matchIndex === 0) {	// first occurance
 				//if (matchIndex === matchCount-1) {	// last occurance
 					out = l + self.o.idPrefix + counter + r;
 				}
@@ -281,6 +282,11 @@
 			 * Počet položek, při kterém se schovají všechna delete tlačítka.
 			 */
 			minRequired: 0,
+
+			/**
+			 * Pokud je replikátor v replikátoru, hloubka udává zanoření tohoto (počítáno od 0).
+			 */
+			depth: 0,
 
 			/**
 			 * function (e, $oldRow)
