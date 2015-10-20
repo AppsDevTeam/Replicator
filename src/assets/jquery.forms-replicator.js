@@ -7,6 +7,8 @@
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
 
+		self.counter = self.$el.children().length;
+
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
 		 */
@@ -23,8 +25,6 @@
 		} else {
 			self.$addButton = $();
 		}
-
-		self.counter = self.$el.children().length;
 
 		self.updateButtonShow();
 
