@@ -13,9 +13,23 @@
 		 * Řádek, který budeme klonovat při přidání nového řádku.
 		 */
 		self.$row = self.$el.children().first();
-		if (self.$row.find(':input[name*="[_new_0]"]').length && self.o.minRequired === 0) {
-			// jde o defaultní položku, která tu jen abychom věděli co kopírovat
-			self.$row.detach();
+
+		if (self.o.minRequired === 0) {
+
+			// jde o defaultní položku, která tu jen abychom věděli co kopírovat?
+			var isRowDefaultClone = false;
+			self.$row.find(':input').each(function () {
+				var name = $(this).attr('name');
+
+				if (name && self.parseCounter(name) === '_new_0') {
+					isRowDefaultClone = true;
+					return false;
+				}
+			});
+
+			if (isRowDefaultClone) {
+				self.$row.detach();
+			}
 		}
 
 		if (self.o.addStaticButton instanceof $) {
@@ -178,11 +192,33 @@
 			$el.attr(attrName, self.replaceAttr(attrVal, counter));
 		},
 
+		createIdRegexp: function () {
+			var idRegexp = '(?:'+ this.o.idPrefix +')?\\d+';
+			return new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
+		},
+
+		/**
+		 * Z daného řetězce (atribut `id` nebo `name` inputu) získá counter.
+		 * @param string
+		 * @returns string
+		 */
+		parseCounter: function (string) {
+			var self = this;
+
+			var stringMatch = string.match(self.createIdRegexp());
+
+			if (!stringMatch) {
+				return null;
+			}
+
+			var name = stringMatch[this.o.depth];
+			return name.substring(1, name.length - 1);
+		},
+
 		replaceAttr: function(string, counter) {
 			var self = this;
 
-			var idRegexp = '(?:'+ self.o.idPrefix +')?\\d+';
-			var regexp = new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
+			var regexp = self.createIdRegexp();
 
 			var stringMatch = string.match(regexp);
 			if (stringMatch === null) return string;	// nejedná se o string reprezentující název komponenty
