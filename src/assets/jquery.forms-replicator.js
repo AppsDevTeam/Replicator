@@ -160,6 +160,9 @@
 					if ($input.is('select')) {
 						$input.find(':selected').prop('selected', false);
 
+					} else if ($input.is('[type=checkbox]') || $input.is('[type=radio]')) {
+						$input.val([]);
+
 					} else if ($input.is('[type=submit]')) {
 
 					} else {
