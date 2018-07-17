@@ -1,0 +1,29 @@
+{
+  "name": "forms-replicator",
+  "version": "1.0.0",
+  "description": "Client side script for Kdyby forms replicator (addDynamic)",
+  "main": "src/assets/jquery.forms-replicator.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AppsDevTeam/Replicator.git"
+  },
+  "keywords": [
+    "nette",
+    "forms",
+    "addDynamic",
+    "replicator"
+  ],
+  "author": "ADT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AppsDevTeam/Replicator/issues"
+  },
+  "homepage": "https://github.com/AppsDevTeam/Replicator#readme"
+}
