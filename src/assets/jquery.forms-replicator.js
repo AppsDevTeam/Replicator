@@ -148,7 +148,11 @@
 
 				var attrRules = $input.attr('data-nette-rules');
 				if (attrRules) {
-					attrRules.match(/"[^"]+"/g).forEach(function(string) {
+					// TODO: správně by to mělo být `/"(?>\\.|.)*?"/g`, ale atomic group nejsou ve Firefoxu podporované.
+					// TODO: S aktuální implementací, pokud bude v nějakém rule JSON (třeba v hlášce) vyescapovaná uvozovka
+					// TODO: bez svého protějšku, například "Máte špatně uvozovku \", opravte si to.", tak se rules nemusí
+					// TODO: bindovat na správné inputy.
+					attrRules.match(/"[^"]*"/g).forEach(function(string) {
 						var search = string.substring(1, string.length - 1);
 						var replace = self.replaceAttr(search, self.counter);
 						attrRules = attrRules.replace(search, replace);
