@@ -103,7 +103,7 @@
 					self.$addButton.removeClass(self.o.classHidden);
 				}
 
-				if (self.$el.children().length < self.o.minRequired) {
+				if (self.$el.children().length <= self.o.minRequired) {
 					$delete.addClass(self.o.classHidden);
 				} else {
 					$delete.removeClass(self.o.classHidden);
