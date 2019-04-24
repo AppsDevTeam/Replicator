@@ -123,8 +123,6 @@
 			var $newRow = self.$row.clone();
 			var newRowCounter = self.counter;
 
-			self.updateButtonShow();
-
 			$newRow.find(':input').each(function(){
 				var $input = $(this);
 
@@ -180,6 +178,8 @@
 			self.counter++;
 
 			self.$el.append($newRow);
+
+			self.updateButtonShow();
 
 			self.toggleFormPart($newRow.find(':input'));
 
