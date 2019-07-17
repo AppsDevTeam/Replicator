@@ -1,6 +1,6 @@
 {
   "name": "forms-replicator",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Client side script for Kdyby forms replicator (addDynamic)",
   "main": "src/assets/jquery.forms-replicator.js",
   "directories": {
