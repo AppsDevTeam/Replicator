@@ -181,11 +181,12 @@
 
 			self.updateButtonShow();
 
-			self.toggleFormPart($newRow.find(':input'));
-
 			if (self.o.afterClone) {
 				self.o.afterClone.call(self, e, $newRow, self.$row, newRowCounter);
 			}
+
+			// Musí být až po afterClone, aby se inicializoval případný datepicker dřív, než se bude kvůli Vodacek validátoru přistupovat k jeho hodnotě.
+			self.toggleFormPart($newRow.find(':input'));
 
 			return $newRow;
 		},
