@@ -126,7 +126,7 @@
 			$newRow.find(':input').each(function(){
 				var $input = $(this);
 
-				var rules = Nette.parseJSON($input[0].getAttribute('data-nette-rules'));
+				var rules = JSON.parse($input[0].getAttribute('data-nette-rules'));
 				for (var i in rules) {
 					var rule = rules[i];
 					if (rule.toggle !== undefined) {
