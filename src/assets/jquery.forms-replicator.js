@@ -105,8 +105,10 @@
 
 			} else {
 
-				$add.addClass(self.o.classHidden);
-				$add.last().removeClass(self.o.classHidden);
+				if (!self.o.addButtonShowAlways) {
+					$add.addClass(self.o.classHidden);
+					$add.last().removeClass(self.o.classHidden);
+				}
 
 				if (!self.o.addStaticButtonShowAlways) {
 					if (self.$el.children().length !== 0) {
@@ -313,6 +315,12 @@
 			 * string
 			 */
 			addSelection: null,
+
+			/**
+			 * Tlačítka add v položkách zobrazit stále všechna.
+			 * bool
+			 */
+			addButtonShowAlways: false,
 
 			/**
 			 * Tlačítko add mimo položky.
