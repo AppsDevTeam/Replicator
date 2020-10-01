@@ -63,7 +63,7 @@
 
 		if (self.o.addSelection) {
 			self.$el.on('click', self.o.addSelection, function(e){
-				self.addRow(e);
+				self.addRow(e, $(this));
 			});
 		}
 
@@ -123,13 +123,16 @@
 				} else {
 					$delete.removeClass(self.o.classHidden);
 				}
-
 			}
 		},
 
-		addRow: function(e) {
+		addRow: function(e, $button) {
 
 			var self = this;
+
+			if ($button) {
+				var $row = $button.closest(self.$el.children());
+			}
 
 			if (self.o.beforeClone) {
 				self.o.beforeClone.call(self, e, self.$row);
@@ -192,7 +195,12 @@
 
 			self.counter++;
 
-			self.$el.append($newRow);
+			if ($row && self.o.addButtonAddAfter) {
+				$row.after($newRow);
+			} else {
+				self.$el.append($newRow);
+			}
+
 
 			self.updateButtonShow();
 
@@ -321,6 +329,13 @@
 			 * bool
 			 */
 			addButtonShowAlways: false,
+
+			/**
+			 * Zda tlačítkem v položkách přidávat řádky za řádek, kde se kliklo.
+			 * V DB si pohlídat pořadí ručně. Lze použít "orderSelector"
+			 * bool
+			 */
+			addButtonAddAfter: false,
 
 			/**
 			 * Tlačítko add mimo položky.
