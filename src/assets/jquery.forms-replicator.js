@@ -47,7 +47,18 @@
 		});
 
 		self.$addButton.on('click', function(e){
-			self.addRow(e);
+			let newRowsNumber = 1;
+			if (self.o.addStaticButtonNumberInputSelector) {
+				newRowsNumber = parseInt($(self.o.addStaticButtonNumberInputSelector).val());
+			}
+
+			if (!newRowsNumber) {
+				newRowsNumber = 1;
+			}
+
+			for (let i = 0; i < newRowsNumber; i++) {
+				self.addRow(e);
+			}
 		});
 
 		if (self.o.addSelection) {
@@ -306,6 +317,12 @@
 			 * jQuery
 			 */
 			addStaticButton: null,
+
+			/**
+			 * Selektor na inputu, určujícím, kolik chci přidat novách řádků
+			 * string
+			 */
+			addStaticButtonNumberInputSelector: false,
 
 			/**
 			 * string
