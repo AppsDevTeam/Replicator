@@ -201,6 +201,12 @@
 				self.$el.append($newRow);
 			}
 
+			if (self.o.orderSelector) {
+				let counter = 1;
+				$(self.o.orderSelector).each(function () {
+					$(this).val(counter++);
+				});
+			}
 
 			self.updateButtonShow();
 
@@ -336,6 +342,12 @@
 			 * bool
 			 */
 			addButtonAddAfter: false,
+
+			/**
+			 * Selektor určující input, ve kterém se uržuje aktuální pořadí, počítáno od 1.
+			 * string
+			 */
+			orderSelector: false,
 
 			/**
 			 * Tlačítko add mimo položky.
