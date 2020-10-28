@@ -184,7 +184,10 @@
 					} else if ($input.is('[type=submit]')) {
 
 					} else {
-						$input.val('');
+						let keepValue = $input.data('replicatorKeepValue');
+						if (keepValue == undefined) {
+							$input.val('');
+						}
 					}
 				}
 
