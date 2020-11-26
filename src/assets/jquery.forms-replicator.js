@@ -150,7 +150,7 @@
 					// TODO: bindovat na správné inputy.
 					attrRules.match(/"[^"]*"/g).forEach(function(string) {
 						var search = string.substring(1, string.length - 1);
-						var replace = self.replaceAttr(this.o.idPrefix, this.o.idPrefix . self.counter);
+						var replace = self.replaceAttr(search, self.counter);
 						attrRules = attrRules.replace(search, replace);
 					});
 					$input.attr('data-nette-rules', attrRules);
