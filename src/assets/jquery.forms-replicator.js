@@ -150,7 +150,7 @@
 					// TODO: bindovat na správné inputy.
 					attrRules.match(/"[^"]*"/g).forEach(function(string) {
 						var search = string.substring(1, string.length - 1);
-						var replace = self.replaceAttr(search, self.counter);
+						var replace = self.replaceAttr(this.o.idPrefix, this.o.idPrefix . self.counter);
 						attrRules = attrRules.replace(search, replace);
 					});
 					$input.attr('data-nette-rules', attrRules);
@@ -196,15 +196,10 @@
 			$el.attr(attrName, attrVal.replace(this.o.idPrefix, this.o.idPrefix + counter));
 		},
 
-		createIdRegexp: function () {
-			var idRegexp = '(?:'+ this.o.idPrefix +')?\\d+';
-			return new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
-		},
-
 		replaceAttr: function(string, counter) {
 			var self = this;
 
-			var regexp = self.createIdRegexp();
+			var regexp = new RegExp('(\\[)'+ this.o.idPrefix + '(\\])|(-)'+ this.o.idPrefix + '(-)', 'g');
 
 			var stringMatch = string.match(regexp);
 			if (stringMatch === null) return string;	// nejedná se o string reprezentující název komponenty
