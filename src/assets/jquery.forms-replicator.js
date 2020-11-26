@@ -7,30 +7,12 @@
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
 
-		self.counter = self.$el.children().length;
+		self.counter = 0;
 
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
 		 */
-		self.$row = self.$el.children().first();
-
-		if (self.o.minRequired === 0) {
-
-			// jde o defaultní položku, která tu jen abychom věděli co kopírovat?
-			var isRowDefaultClone = false;
-			self.$row.find(':input').each(function () {
-				var name = $(this).attr('name');
-
-				if (name && self.parseCounter(name) === '_new_0') {
-					isRowDefaultClone = true;
-					return false;
-				}
-			});
-
-			if (isRowDefaultClone) {
-				self.$row.detach();
-			}
-		}
+		self.$row = $(self.o.template);
 
 		if (self.o.addStaticButton instanceof $) {
 			self.$addButton = self.o.addStaticButton;
@@ -173,24 +155,6 @@
 					});
 					$input.attr('data-nette-rules', attrRules);
 				}
-
-				if (self.o.inputClear === null || self.o.inputClear.call(self, e, $input, $newRow) !== false) {
-					if ($input.is('select')) {
-						$input.find(':selected').prop('selected', false);
-
-					} else if ($input.is('[type=checkbox]') || $input.is('[type=radio]')) {
-						$input.val([]);
-
-					} else if ($input.is('[type=submit]')) {
-
-					} else {
-						let keepValue = $input.data('replicatorKeepValue');
-						if (keepValue == undefined) {
-							$input.val('');
-						}
-					}
-				}
-
 			});
 			$newRow.find('label').each(function(){
 				self.replaceElemAttr($(this), 'for', self.counter);
@@ -229,30 +193,12 @@
 			var attrVal = $el.attr(attrName);
 			if (attrVal === undefined) return;
 
-			$el.attr(attrName, self.replaceAttr(attrVal, counter));
+			$el.attr(attrName, attrVal.replace(this.o.idPrefix, this.o.idPrefix + counter));
 		},
 
 		createIdRegexp: function () {
 			var idRegexp = '(?:'+ this.o.idPrefix +')?\\d+';
 			return new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
-		},
-
-		/**
-		 * Z daného řetězce (atribut `id` nebo `name` inputu) získá counter.
-		 * @param string
-		 * @returns string
-		 */
-		parseCounter: function (string) {
-			var self = this;
-
-			var stringMatch = string.match(self.createIdRegexp());
-
-			if (!stringMatch) {
-				return null;
-			}
-
-			var name = stringMatch[this.o.depth];
-			return name.substring(1, name.length - 1);
 		},
 
 		replaceAttr: function(string, counter) {
@@ -270,8 +216,8 @@
 				var l = l1 || l2;
 				var r = r1 || r2;
 				if (matchIndex === self.o.depth) {	// particular occurance
-				//if (matchIndex === 0) {	// first occurance
-				//if (matchIndex === matchCount-1) {	// last occurance
+					//if (matchIndex === 0) {	// first occurance
+					//if (matchIndex === matchCount-1) {	// last occurance
 					out = l + self.o.idPrefix + counter + r;
 				}
 
@@ -307,7 +253,7 @@
 
 			$inputs.each(function(){
 				var el = this;
-				if (el.tagName.toLowerCase() in {input: 1, select: 1, textarea: 1, button: 1}) {
+				if (el.tagName.toLowerCase() in { input: 1, select: 1, textarea: 1, button: 1 }) {
 					Nette.toggleControl(el, null, null, true);
 				}
 			});
@@ -422,6 +368,11 @@
 			 * function (e, $row)
 			 */
 			afterDelete: null,
+
+			/**
+			 * string s html kodem, ktery se ma replikovat
+			 */
+			template: null
 		}
 	};
 
