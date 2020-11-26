@@ -104,10 +104,17 @@
 				$delete.last().addClass(self.o.classHidden);
 
 			} else {
+				if ($add.length) {
+					if (!self.o.addButtonShowAlways) {
+						$add.addClass(self.o.classHidden);
+						$add.last().removeClass(self.o.classHidden);
+					}
 
-				if (!self.o.addButtonShowAlways) {
-					$add.addClass(self.o.classHidden);
-					$add.last().removeClass(self.o.classHidden);
+					if (self.$el.children().length !== 0) {
+						self.$addButton.addClass(self.o.classHidden);
+					} else {
+						self.$addButton.removeClass(self.o.classHidden);
+					}
 				}
 
 				if (!self.o.addStaticButtonShowAlways) {
@@ -357,12 +364,6 @@
 			 * jQuery
 			 */
 			addStaticButton: null,
-
-			/**
-			 * Tlačítko add mimo položky zobrazovat vždy.
-			 * bool
-			 */
-			addStaticButtonShowAlways: false,
 
 			/**
 			 * Selektor na inputu, určujícím, kolik chci přidat novách řádků
