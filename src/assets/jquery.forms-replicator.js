@@ -7,7 +7,7 @@
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
 
-		self.counter = 0;
+		self.counter = self.$el.find('.replicator-item').length;
 
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
