@@ -319,7 +319,7 @@
 			/**
 			 * Třída, která se použije pro skrývání elementů.
 			 */
-			classHidden: 'hidden',
+			classHidden: 'd-none',
 
 			/**
 			 * Prefix před id, který se vyskytuje u nových položek.
