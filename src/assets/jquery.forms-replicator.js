@@ -6,20 +6,28 @@
 
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
-
-		self.counter = self.$el.find('.replicator-item').length;
+		self.counter = self.$el.find('[data-adt-replicator-item]').length;
 
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
 		 */
-		self.$row = $(self.o.template);
+		if (self.o.template) {
+			self.$row = $(self.o.template);
+		} else {
+			const el = self.$el.find('[data-adt-replicator-template]');
+			self.$row = el.clone();
+			self.$row.removeClass(self.o.classHidden);
+			self.$row.removeAttr('data-adt-replicator-template');
+			self.$row.attr('data-adt-replicator-item', true);
+			el.remove();
+		}
 
 		if (self.o.addStaticButton instanceof $) {
 			self.$addButton = self.o.addStaticButton;
 		} else if (typeof self.o.addStaticButton === 'function') {
 			self.$addButton = self.o.addStaticButton(self.$el);
 		} else {
-			self.$addButton = $();
+			self.$addButton = $('[data-adt-replicator-add]');
 		}
 
 		self.updateButtonShow();
@@ -93,14 +101,14 @@
 				}
 
 				if (!self.o.addStaticButtonShowAlways) {
-					if (self.$el.children().length !== 0) {
+					if (self.$el.find('[data-adt-replicator-item]').find('[data-adt-replicator-add]').length !== 0) {
 						self.$addButton.addClass(self.o.classHidden);
 					} else {
 						self.$addButton.removeClass(self.o.classHidden);
 					}
 				}
 
-				if (self.$el.children().length <= self.o.minRequired) {
+				if (self.$el.find('[data-adt-replicator-item]').length <= self.o.minRequired) {
 					$delete.addClass(self.o.classHidden);
 				} else {
 					$delete.removeClass(self.o.classHidden);
@@ -109,11 +117,10 @@
 		},
 
 		addRow: function(e, $button) {
-
 			var self = this;
 
 			if ($button) {
-				var $row = $button.closest(self.$el.children());
+				var $row = $button.closest('[data-adt-replicator-item]');
 			}
 
 			if (self.o.beforeClone) {
@@ -160,13 +167,15 @@
 				self.replaceElemAttr($(this), 'for', self.counter);
 			});
 
-			self.counter++;
-
 			if ($row && self.o.addButtonAddAfter) {
 				$row.after($newRow);
+			} else if (self.$el.find('[data-adt-replicator-item]').length) {
+				self.$el.find('[data-adt-replicator-item]').last().after($newRow);
 			} else {
-				self.$el.append($newRow);
+				self.$el.prepend($newRow);
 			}
+
+			self.counter++;
 
 			if (self.o.orderSelector) {
 				let counter = 1;
@@ -266,7 +275,7 @@
 			 * Selection pro tlačítka delete v položkách.
 			 * string
 			 */
-			deleteSelection: null,
+			deleteSelection: '[data-adt-replicator-remove]',
 
 			/**
 			 * Selection pro tlačítka add v položkách.
