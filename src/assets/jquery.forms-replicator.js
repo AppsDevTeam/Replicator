@@ -169,8 +169,8 @@
 
 			if ($row && self.o.addButtonAddAfter) {
 				$row.after($newRow);
-			} else if (self.$el.find('[data-adt-replicator-item]').length) {
-				self.$el.find('[data-adt-replicator-item]').last().after($newRow);
+			} else if (self.$el.find('> [data-adt-replicator-item]').length) {
+				self.$el.find('> [data-adt-replicator-item]').last().after($newRow);
 			} else {
 				self.$el.prepend($newRow);
 			}
