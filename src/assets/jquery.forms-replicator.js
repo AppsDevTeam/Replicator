@@ -196,13 +196,25 @@
 			return $newRow;
 		},
 
+		replaceNthOccurrence: function(str, search, replace, nth) {
+			var index = 0;
+			return str.replace(new RegExp(search, 'g'), function(match) {
+				index++;
+				if (index === nth) {
+					return replace;
+				} else {
+					return match;
+				}
+			});
+		},
+
 		replaceElemAttr: function($el, attrName, counter) {
 			var self = this;
 
 			var attrVal = $el.attr(attrName);
 			if (attrVal === undefined) return;
 
-			$el.attr(attrName, attrVal.replace(this.o.idPrefix, this.o.idPrefix + counter));
+			$el.attr(attrName, self.replaceNthOccurrence(attrVal, this.o.idPrefix, this.o.idPrefix + counter, this.o.depth + 1));
 		},
 
 		replaceAttr: function(string, counter) {
