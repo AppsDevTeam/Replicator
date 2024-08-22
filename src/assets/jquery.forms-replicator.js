@@ -166,6 +166,9 @@
 			$newRow.find('label').each(function(){
 				self.replaceElemAttr($(this), 'for', self.counter);
 			});
+			$newRow.find('.invalid-feedback').each(function(){
+				self.replaceElemAttr($(this), 'id', self.counter);
+			});
 
 			if ($row && self.o.addButtonAddAfter) {
 				$row.after($newRow);
@@ -196,25 +199,13 @@
 			return $newRow;
 		},
 
-		replaceNthOccurrence: function(str, search, replace, nth) {
-			var index = 0;
-			return str.replace(new RegExp(search, 'g'), function(match) {
-				index++;
-				if (index === nth) {
-					return replace;
-				} else {
-					return match;
-				}
-			});
-		},
-
 		replaceElemAttr: function($el, attrName, counter) {
 			var self = this;
 
 			var attrVal = $el.attr(attrName);
 			if (attrVal === undefined) return;
 
-			$el.attr(attrName, self.replaceNthOccurrence(attrVal, this.o.idPrefix, this.o.idPrefix + counter, this.o.depth + 1));
+			$el.attr(attrName, attrVal.replace(this.o.idPrefix, this.o.idPrefix + counter));
 		},
 
 		replaceAttr: function(string, counter) {
