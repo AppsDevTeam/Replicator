@@ -6,20 +6,30 @@
 
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
-		self.counter = self.$el.find('[data-adt-replicator-item]').length;
+
+		self.counter = self.$el.children().length;
 
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
 		 */
-		if (self.o.template) {
-			self.$row = $(self.o.template);
-		} else {
-			const el = self.$el.find('[data-adt-replicator-template]');
-			self.$row = el.clone();
-			self.$row.removeClass(self.o.classHidden);
-			self.$row.removeAttr('data-adt-replicator-template');
-			self.$row.attr('data-adt-replicator-item', true);
-			el.remove();
+		self.$row = self.$el.children().first();
+
+		if (self.o.minRequired === 0) {
+
+			// jde o defaultní položku, která tu jen abychom věděli co kopírovat?
+			var isRowDefaultClone = false;
+			self.$row.find(':input').each(function () {
+				var name = $(this).attr('name');
+
+				if (name && self.parseCounter(name) === '_new_0') {
+					isRowDefaultClone = true;
+					return false;
+				}
+			});
+
+			if (isRowDefaultClone) {
+				self.$row.detach();
+			}
 		}
 
 		if (self.o.addStaticButton instanceof $) {
@@ -27,7 +37,7 @@
 		} else if (typeof self.o.addStaticButton === 'function') {
 			self.$addButton = self.o.addStaticButton(self.$el);
 		} else {
-			self.$addButton = $('[data-adt-replicator-add]');
+			self.$addButton = $();
 		}
 
 		self.updateButtonShow();
@@ -101,14 +111,14 @@
 				}
 
 				if (!self.o.addStaticButtonShowAlways) {
-					if (self.$el.find('[data-adt-replicator-item]').find('[data-adt-replicator-add]').length !== 0) {
+					if (self.$el.children().length !== 0) {
 						self.$addButton.addClass(self.o.classHidden);
 					} else {
 						self.$addButton.removeClass(self.o.classHidden);
 					}
 				}
 
-				if (self.$el.find('[data-adt-replicator-item]').length <= self.o.minRequired) {
+				if (self.$el.children().length <= self.o.minRequired) {
 					$delete.addClass(self.o.classHidden);
 				} else {
 					$delete.removeClass(self.o.classHidden);
@@ -117,10 +127,11 @@
 		},
 
 		addRow: function(e, $button) {
+
 			var self = this;
 
 			if ($button) {
-				var $row = $button.closest('[data-adt-replicator-item]');
+				var $row = $button.closest(self.$el.children());
 			}
 
 			if (self.o.beforeClone) {
@@ -162,6 +173,24 @@
 					});
 					$input.attr('data-nette-rules', attrRules);
 				}
+
+				if (self.o.inputClear === null || self.o.inputClear.call(self, e, $input, $newRow) !== false) {
+					if ($input.is('select')) {
+						$input.find(':selected').prop('selected', false);
+
+					} else if ($input.is('[type=checkbox]') || $input.is('[type=radio]')) {
+						$input.val([]);
+
+					} else if ($input.is('[type=submit]')) {
+
+					} else {
+						let keepValue = $input.data('replicatorKeepValue');
+						if (keepValue == undefined) {
+							$input.val('');
+						}
+					}
+				}
+
 			});
 			$newRow.find('label').each(function(){
 				self.replaceElemAttr($(this), 'for', self.counter);
@@ -170,15 +199,13 @@
 				self.replaceElemAttr($(this), 'id', self.counter);
 			});
 
+			self.counter++;
+
 			if ($row && self.o.addButtonAddAfter) {
 				$row.after($newRow);
-			} else if (self.$el.find('> [data-adt-replicator-item]').length) {
-				self.$el.find('> [data-adt-replicator-item]').last().after($newRow);
 			} else {
-				self.$el.prepend($newRow);
+				self.$el.append($newRow);
 			}
-
-			self.counter++;
 
 			if (self.o.orderSelector) {
 				let counter = 1;
@@ -205,13 +232,36 @@
 			var attrVal = $el.attr(attrName);
 			if (attrVal === undefined) return;
 
-			$el.attr(attrName, attrVal.replace(this.o.idPrefix, this.o.idPrefix + counter));
+			$el.attr(attrName, self.replaceAttr(attrVal, counter));
+		},
+
+		createIdRegexp: function () {
+			var idRegexp = '(?:'+ this.o.idPrefix +')?\\d+';
+			return new RegExp('(\\[)'+ idRegexp + '(\\])|(-)'+ idRegexp + '(-)', 'g');
+		},
+
+		/**
+		 * Z daného řetězce (atribut `id` nebo `name` inputu) získá counter.
+		 * @param string
+		 * @returns string
+		 */
+		parseCounter: function (string) {
+			var self = this;
+
+			var stringMatch = string.match(self.createIdRegexp());
+
+			if (!stringMatch) {
+				return null;
+			}
+
+			var name = stringMatch[this.o.depth];
+			return name.substring(1, name.length - 1);
 		},
 
 		replaceAttr: function(string, counter) {
 			var self = this;
 
-			var regexp = new RegExp('(\\[)'+ this.o.idPrefix + '(\\])|(-)'+ this.o.idPrefix + '(-)', 'g');
+			var regexp = self.createIdRegexp();
 
 			var stringMatch = string.match(regexp);
 			if (stringMatch === null) return string;	// nejedná se o string reprezentující název komponenty
@@ -223,8 +273,8 @@
 				var l = l1 || l2;
 				var r = r1 || r2;
 				if (matchIndex === self.o.depth) {	// particular occurance
-					//if (matchIndex === 0) {	// first occurance
-					//if (matchIndex === matchCount-1) {	// last occurance
+				//if (matchIndex === 0) {	// first occurance
+				//if (matchIndex === matchCount-1) {	// last occurance
 					out = l + self.o.idPrefix + counter + r;
 				}
 
@@ -260,7 +310,7 @@
 
 			$inputs.each(function(){
 				var el = this;
-				if (el.tagName.toLowerCase() in { input: 1, select: 1, textarea: 1, button: 1 }) {
+				if (el.tagName.toLowerCase() in {input: 1, select: 1, textarea: 1, button: 1}) {
 					Nette.toggleControl(el, null, null, true);
 				}
 			});
@@ -278,7 +328,7 @@
 			 * Selection pro tlačítka delete v položkách.
 			 * string
 			 */
-			deleteSelection: '[data-adt-replicator-remove]',
+			deleteSelection: null,
 
 			/**
 			 * Selection pro tlačítka add v položkách.
@@ -331,7 +381,7 @@
 			/**
 			 * Třída, která se použije pro skrývání elementů.
 			 */
-			classHidden: 'd-none',
+			classHidden: 'hidden',
 
 			/**
 			 * Prefix před id, který se vyskytuje u nových položek.
@@ -375,11 +425,6 @@
 			 * function (e, $row)
 			 */
 			afterDelete: null,
-
-			/**
-			 * string s html kodem, ktery se ma replikovat
-			 */
-			template: null
 		}
 	};
 
