@@ -7,7 +7,7 @@
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
 		const inputName = self.$el.find('[data-adt-replicator-item]:last').find(':input').attr('name');
-		const foundValue = inputName && self.findNthOccurrence(inputName, this.o.depth + 1);
+		const foundValue = inputName ? self.findNthOccurrence(inputName, this.o.depth + 1) : null;
 		self.counter = foundValue !== null ? foundValue + 1 : 0;
 
 		/**
