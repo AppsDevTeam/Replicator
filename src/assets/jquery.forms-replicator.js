@@ -6,7 +6,9 @@
 
 		self.$el = element;
 		self.o = $.extend({}, self.defaults, options);
-		self.counter = self.$el.find('[data-adt-replicator-item]').length;
+		const inputName = self.$el.find('[data-adt-replicator-item]:last').find(':input').attr('name');
+		const foundValue = inputName && self.findNthOccurrence(inputName, this.o.depth + 1);
+		self.counter = foundValue !== null ? foundValue + 1 : 0;
 
 		/**
 		 * Řádek, který budeme klonovat při přidání nového řádku.
@@ -37,6 +39,14 @@
 		});
 
 		self.$addButton.on('click', function(e){
+			const validateFn = $(this).data('adt-replicator-add-before-callback');
+			if (validateFn) {
+				if (!window[validateFn](this)) {
+					e.preventDefault();
+					return false;
+				}
+			}
+			
 			let newRowsNumber = 1;
 			if (self.o.addStaticButtonNumberInputSelector) {
 				newRowsNumber = parseInt($(self.o.addStaticButtonNumberInputSelector).val());
@@ -197,6 +207,12 @@
 			self.toggleFormPart($newRow.find(':input'));
 
 			return $newRow;
+		},
+
+		findNthOccurrence: function(str, nth) {
+			var pattern = new RegExp(this.o.idPrefix + '(\\d+)', 'g');
+			var matches = Array.from(str.matchAll(pattern), match => parseInt(match[1], 10));
+			return matches[nth - 1] ?? null;
 		},
 
 		replaceNthOccurrence: function(str, search, replace, nth) {
