@@ -173,6 +173,12 @@
 					$input.attr('data-nette-rules', attrRules);
 				}
 			});
+			$newRow.find('[id^="snippet"]').each(function(){
+				self.replaceElemAttr($(this), 'id', self.counter);
+			});
+			$newRow.find('[data-adt-redraw-snippet]').each(function(){
+				self.replaceElemAttr($(this), 'data-adt-redraw-snippet', self.counter);
+			});
 			$newRow.find('label').each(function(){
 				self.replaceElemAttr($(this), 'for', self.counter);
 			});
